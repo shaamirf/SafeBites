@@ -1,0 +1,254 @@
+<html>
+<head>
+<style>
+* { box-sizing: border-box; }
+body {
+  font: 16px Arial; 
+}
+.autocomplete {
+  /*the container must be positioned relative:*/
+  position: relative;
+  display: inline-block;
+}
+input {
+  border: 1px solid transparent;
+  background-color: #f1f1f1;
+  padding: 10px;
+  font-size: 16px;
+}
+input[type=text] {
+  background-color: #f1f1f1;
+  width: 100%;
+}
+input[type=submit] {
+  background-color: DodgerBlue;
+  color: #fff;
+}
+.autocomplete-items {
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  border-bottom: none;
+  border-top: none;
+  z-index: 99;
+  /*position the autocomplete items to be the same width as the container:*/
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+.autocomplete-items div {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #fff; 
+  border-bottom: 1px solid #d4d4d4; 
+}
+.autocomplete-items div:hover {
+  /*when hovering an item:*/
+  background-color: #e9e9e9; 
+}
+.autocomplete-active {
+  /*when navigating through the items using the arrow keys:*/
+  background-color: DodgerBlue !important; 
+  color: #ffffff; 
+}
+</style>
+<script>
+//var hotels = [{"name":"one","id":"1"},{"name":"two","id":"2"},{"name":"three","id":"3"},{"name":"four","id":"4"},{"name":"five","id":"5"}];
+//var est_ids = {
+        //"1":{"name":"one", "Address":"1 street", "violations":["violation1","violation2","violation3","violation4"]},
+        //"2":{"name":"two", "Address":"2 street", "violations":["violation1","violation2","violation3"]},
+        //"3":{"name":"three", "Address":"3 street", "violations":["violation2","violation3","violation4"]},
+        //"4":{"name":"four", "Address":"4 street", "violations":["violation2","violation3"]},
+        //"5":{"name":"five", "Address":"5 street", "violations":["violation1","violation4"]}
+//};
+var data = {
+            "objectIdFieldName":"OBJECTID",
+            "uniqueIdField":{
+                    "name":"OBJECTID",
+                    "isSystemMaintained":true
+                    },
+            "globalIdFieldName":"GlobalID",
+            "geometryType":"esriGeometryPoint",
+            "spatialReference":
+            {"wkid":4326,"latestWkid":4326},
+            "fields":[
+                    {"name":"Facility_ID","type":"esriFieldTypeString","alias":"Facility_ID","sqlType":"sqlTypeOther","length":255,"domain":null,"defaultValue":null},
+                    {"name":"Address","type":"esriFieldTypeString","alias":"Address","sqlType":"sqlTypeOther","length":255,"domain":null,"defaultValue":null},
+                    {"name":"Zip","type":"esriFieldTypeString","alias":"Zip","sqlType":"sqlTypeOther","length":255,"domain":null,"defaultValue":null},
+                    {"name":"Violation_Description","type":"esriFieldTypeString","alias":"Violation_Description","sqlType":"sqlTypeOther","length":255,"domain":null,"defaultValue":null},
+                    {"name":"Facility_Name","type":"esriFieldTypeString","alias":"Facility_Name","sqlType":"sqlTypeOther","length":255,"domain":null,"defaultValue":null},
+                    {"name":"Activity_Date","type":"esriFieldTypeDate","alias":"Activity_Date","sqlType":"sqlTypeOther","length":8,"domain":null,"defaultValue":null}],
+            "exceededTransferLimit":true,
+            "features":[
+                    {"attributes":{"Facility_ID":"FA0308833","Address":"39700 CEDAR BLVD","Zip":"94560","Violation_Description":"Food contact surfaces: clean and sanitized","Facility_Name":"CAL EATS","Activity_Date":1551657600000},"geometry":{"x":-121.99837816021176,"y":37.52173171030789}},
+                    {"attributes":{"Facility_ID":"FA0308833","Address":"39700 CEDAR BLVD","Zip":"94560","Violation_Description":"Sample test: clean and sanitized","Facility_Name":"CAL EATS","Activity_Date":1551657600000},"geometry":{"x":-121.99837816021176,"y":37.52173171030789}},
+                    {"attributes":{"Facility_ID":"FA0304615","Address":"39257 CEDAR BLVD","Zip":"94560","Violation_Description":"Equipment, utensils and linens: storage and use","Facility_Name":"TIT BBQ","Activity_Date":1557100800000},"geometry":{"x":-122.00352912969531,"y":37.522806089794884}},
+                    {"attributes":{"Facility_ID":"FA0303453","Address":"5989 MOWRY AVE","Zip":"94560","Violation_Description":"Nonfood-contact surfaces clean","Facility_Name":"RAY'S CRAB SHACK","Activity_Date":1551916800000},"geometry":{"x":-122.00747008016923,"y":37.525312309762036}},
+                    {"attributes":{"Facility_ID":"FA0003405","Address":"3100 NEWPARK MALL","Zip":"94560","Violation_Description":"Signs posted last inspection report available","Facility_Name":"LAZY DOG RESTAURANT & BAR","Activity_Date":1580169600000},"geometry":{"x":-122.00611992038203,"y":37.525943560073415}},
+                    {"attributes":{"Facility_ID":"FA0318998","Address":"3900 NEWPARK MALL RD 102","Zip":"94560","Violation_Description":"Equipment/Utensils - approved installed clean g","Facility_Name":"ASHWINS KITCHEN","Activity_Date":1572307200000},"geometry":{"x":-122.00442241980372,"y":37.528027500107171}},
+                    {"attributes":{"Facility_ID":"FA0003024","Address":"46560 FREMONT BLVD 101","Zip":"94538","Violation_Description":"Proper reheating procedures for hot holding","Facility_Name":"Y2 DELI","Activity_Date":1599782400000},"geometry":{"x":-121.94489089973681,"y":37.483684509730494}},
+                    {"attributes":{"Facility_ID":"FA0000153","Address":"904 TALBOT AVE","Zip":"94706","Violation_Description":"Adequate ventilation and lighting designated area","Facility_Name":"CORNELL SCHOOL CAFETERIA","Activity_Date":1576195200000},"geometry":{"x":-122.29508457042465,"y":37.889564529922}},
+                    {"attributes":{"Facility_ID":"FA0314391","Address":"1175 SOLANO AVE","Zip":"94706","Violation_Description":"Warewashing facilities: installed, maintained, use","Facility_Name":"5 TACOS AND BEERS","Activity_Date":1606089600000},"geometry":{"x":-122.29676441012448,"y":37.890649620281764}},
+                    {"attributes":{"Facility_ID":"FA0000129","Address":"1500 SOLANO AVE","Zip":"94706","Violation_Description":"Floors, walls and ceilings: built, maintained, and","Facility_Name":"SAFEWAY #676","Activity_Date":1548374400000},"geometry":{"x":-122.2865061697044,"y":37.890962290318626}},
+                    {"attributes":{"Facility_ID":"FA0002994","Address":"46999 WARM SPRINGS BLVD","Zip":"94539","Violation_Description":"Proper hot and cold holding temperatures","Facility_Name":"MINGALA CAFE","Activity_Date":1582588800000},"geometry":{"x":-121.92851616978601,"y":37.487285090172421}}
+                    ]
+            };
+
+//violations = [{description, time},{dscription, time},{description, time}]
+
+var hotels = {};
+for (i = 0; i < data.features.length; i++) { 
+  if(data.features[i].attributes.Facility_ID in hotels) {
+    hotels[data.features[i].attributes.Facility_ID].Violations.push({"Violation_Description":data.features[i].attributes.Violation_Description,"Activity_Date":data.features[i].attributes.Activity_Date});
+  }
+  else {
+    hotels[data.features[i].attributes.Facility_ID] = {"Address":data.features[i].attributes.Address,"Zip":data.features[i].attributes.Zip,"Violations":[{"Violation_Description":data.features[i].attributes.Violation_Description,"Activity_Date":data.features[i].attributes.Activity_Date}],"Facility_Name":data.features[i].attributes.Facility_Name};
+  }
+}
+
+//alert(JSON.stringify(hotels));
+//alert(data.features[0].attributes.Facility_Name);
+
+function autocomplete(inp, arr) {
+  //alert(arr[0].name.toUpperCase());
+  /*the autocomplete function takes two arguments,
+  the text field element and an array of possible autocompleted values:*/
+  var currentFocus;
+  /*execute a function when someone writes in the text field:*/
+  inp.addEventListener("input", function(e) {
+      var a, b, i, val = this.value;
+      /*close any already open lists of autocompleted values*/
+      closeAllLists();
+      if (!val) { return false;}
+      currentFocus = -1;
+      /*create a DIV element that will contain the items (values):*/
+      a = document.createElement("DIV");
+      a.setAttribute("id", this.id + "autocomplete-list");
+      a.setAttribute("class", "autocomplete-items");
+      /*append the DIV element as a child of the autocomplete container:*/
+      this.parentNode.appendChild(a);
+      /*for each item in the array...*/
+      //for (i = 0; i < arr.length; i++) {
+      for (var elem in arr) {
+        /*check if the item starts with the same letters as the text field value:*/
+        if (arr[elem].Facility_Name.substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+          /*create a DIV element for each matching element:*/
+          b = document.createElement("DIV");
+          /*make the matching letters bold:*/
+          b.innerHTML = "<strong>" + arr[elem].Facility_Name.substr(0, val.length) + "</strong>";
+          b.innerHTML += arr[elem].Facility_Name.substr(val.length);
+          /*insert a input field that will hold the current array item's value:*/
+          b.innerHTML += "<input type='hidden' value='" + arr[elem].Facility_Name + "'>";
+          b.innerHTML += "<input type='hidden' value='" + elem + "'>";
+          /*execute a function when someone clicks on the item value (DIV element):*/
+              b.addEventListener("click", function(e) {
+              /*insert the value for the autocomplete text field:*/
+              inp.value = this.getElementsByTagName("input")[0].value;
+              //alert(this.getElementsByTagName("input")[1].value);
+              //alert(est_ids.${this.getElementsByTagName("input")[1].value});
+              /*close the list of autocompleted values,
+              (or any other open lists of autocompleted values:*/
+              closeAllLists();
+
+              //alert(est_ids[this.getElementsByTagName("input")[1].value].violations.join('<br/>'));
+              var p_est_name = document.getElementById('est_name');
+              p_est_name.innerHTML = this.getElementsByTagName("input")[0].value;
+              var p_violations = document.getElementById('violations');
+              var violations_str = "<ul>";
+              formatted_viols = hotels[this.getElementsByTagName("input")[1].value].Violations;
+              for( var viol in formatted_viols ) {
+                  violations_str = violations_str.concat("<li>",formatted_viols[viol].Violation_Description," on ",new Date(formatted_viols[viol].Activity_Date), "</li>");
+              }
+              violations_str = violations_str.concat("</ul>");
+              //alert(violations_str);
+              p_violations.innerHTML = violations_str;
+          });
+          a.appendChild(b);
+        }
+      }
+  });
+  /*execute a function presses a key on the keyboard:*/
+  inp.addEventListener("keydown", function(e) {
+      var x = document.getElementById(this.id + "autocomplete-list");
+      if (x) x = x.getElementsByTagName("div");
+      if (e.keyCode == 40) {
+        /*If the arrow DOWN key is pressed,
+        increase the currentFocus variable:*/
+        currentFocus++;
+        /*and and make the current item more visible:*/
+        addActive(x);
+      } else if (e.keyCode == 38) { //up
+        /*If the arrow UP key is pressed,
+        decrease the currentFocus variable:*/
+        currentFocus--;
+        /*and and make the current item more visible:*/
+        addActive(x);
+      } else if (e.keyCode == 13) {
+        /*If the ENTER key is pressed, prevent the form from being submitted,*/
+        e.preventDefault();
+        if (currentFocus > -1) {
+          /*and simulate a click on the "active" item:*/
+          if (x) x[currentFocus].click();
+        }
+      }
+  });
+  function addActive(x) {
+    /*a function to classify an item as "active":*/
+    if (!x) return false;
+    /*start by removing the "active" class on all items:*/
+    removeActive(x);
+    if (currentFocus >= x.length) currentFocus = 0;
+    if (currentFocus < 0) currentFocus = (x.length - 1);
+    /*add class "autocomplete-active":*/
+    x[currentFocus].classList.add("autocomplete-active");
+  }
+  function removeActive(x) {
+    /*a function to remove the "active" class from all autocomplete items:*/
+    for (var i = 0; i < x.length; i++) {
+      x[i].classList.remove("autocomplete-active");
+    }
+  }
+  function closeAllLists(elmnt) {
+    /*close all autocomplete lists in the document,
+    except the one passed as an argument:*/
+    var x = document.getElementsByClassName("autocomplete-items");
+    for (var i = 0; i < x.length; i++) {
+      if (elmnt != x[i] && elmnt != inp) {
+      x[i].parentNode.removeChild(x[i]);
+    }
+  }
+}
+/*execute a function when someone clicks in the document:*/
+document.addEventListener("click", function (e) {
+    closeAllLists(e.target);
+});
+}
+
+
+</script>
+
+</head>
+<body>
+<!--Make sure the form has the autocomplete function switched off:-->
+<form autocomplete="off" action="/action_page.php">
+  <div class="autocomplete" style="width:300px;">
+    <input id="myInput" type="text" name="myHotel" placeholder="Hotel"/>
+  </div>
+</form>
+<script>
+//alert(countries);
+autocomplete(document.getElementById("myInput"), hotels);
+</script>
+<Table border="1">
+<tr>
+<td>Establishment</td>	 
+<td>Violations</td>	 
+</tr>
+<tr>
+<td><p id="est_name">&nbsp;</p> </td>	 
+<td><p id="violations">&nbsp;</p> </td>	 
+</tr>
+</Table>
+
+</body>
+</html>
+
